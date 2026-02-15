@@ -1,0 +1,81 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole {
+  ADMIN
+  CLINIC
+}
+
+model User {
+  id       String   @id @default(uuid())
+  name     String
+  email    String   @unique
+  password String?
+  role     UserRole @default(CLINIC)
+
+  setupToken String? @unique
+  isActive   Boolean @default(false)
+
+  clinicId String?
+  clinic   Clinic? @relation(fields: [clinicId], references: [id])
+}
+
+model Clinic {
+  id       String  @id @default(uuid())
+  name     String
+  phone    String?
+  address  String?
+  isActive Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  users        User[]
+  patients     Patient[]
+  appointments Appointment[]
+}
+
+model Patient {
+  id        String   @id @default(uuid())
+  name      String
+  phone     String
+  notes     String?
+  clinicId  String
+  clinic    Clinic   @relation(fields: [clinicId], references: [id])
+  createdAt DateTime @default(now())
+
+  appointments Appointment[]
+  followups    FollowUp[]
+}
+
+model Appointment {
+  id        String   @id @default(uuid())
+  clinicId  String
+  patientId String
+  datetime  DateTime
+  status    String   @default("scheduled")
+
+  clinic  Clinic  @relation(fields: [clinicId], references: [id])
+  patient Patient @relation(fields: [patientId], references: [id])
+}
+
+model FollowUp {
+  id        String   @id @default(uuid())
+  patientId String
+  followAt  DateTime
+  sent      Boolean  @default(false)
+
+  patient Patient @relation(fields: [patientId], references: [id])
+}
