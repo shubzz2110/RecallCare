@@ -4,7 +4,7 @@ import type React from "react";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router";
 
-const PUBLIC_ROUTES = ["/login", "/auth/setup-password"];
+const PUBLIC_ROUTES = ["/login", "/setup-password"];
 
 export default function AuthProvider({
   children,

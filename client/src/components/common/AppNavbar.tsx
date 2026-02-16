@@ -34,7 +34,7 @@ export default function AppNavbar() {
               Clinic
             </span>
             <span className="text-foreground font-medium text-sm leading-3">
-              SmileCare Clinic
+              {useAuthStore.getState().user?.clinic?.name || "Unknown Clinic"}
             </span>
           </Button>
         </DropdownMenuTrigger>

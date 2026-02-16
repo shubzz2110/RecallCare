@@ -2,6 +2,9 @@ export interface User {
   id: string;
   name: string;
   email: string;
-  clinicId?: string;
+  clinic?: {
+    id: string;
+    name: string;
+  };
   role?: "ADMIN" | "CLINIC";
 }

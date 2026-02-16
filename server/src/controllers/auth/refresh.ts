@@ -31,6 +31,11 @@ const refreshTokenController = async (req: Request, res: Response) => {
 
     const user = await prisma.user.findUnique({
       where: { id: decoded.user.id },
+      include: {
+        clinic: {
+          select: { name: true },
+        },
+      },
       omit: { role: false },
     });
 
@@ -55,7 +60,7 @@ const refreshTokenController = async (req: Request, res: Response) => {
       id: user?.id,
       email: user?.email,
       name: user?.name,
-      clinicId: user?.clinicId,
+      clinic: user?.clinic,
       role: user.role,
     };
 

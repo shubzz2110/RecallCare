@@ -13,8 +13,13 @@ import {
   InputGroupInput,
   InputGroupAddon,
 } from "@/components/ui/input-group";
-import { Mail, Phone, Stethoscope } from "lucide-react";
+import { Mail, Phone, Stethoscope, User2 } from "lucide-react";
 import { Label } from "@/components/ui/label";
+import { useState } from "react";
+import { Spinner } from "@/components/ui/spinner";
+import { api } from "@/lib/api";
+import { toast } from "sonner";
+import { errorHandler } from "@/lib/utils";
 
 interface AddClinicDialogProps {
   showDialog: boolean;
@@ -25,25 +30,52 @@ export default function AddClinicDialog({
   showDialog,
   onCloseDialog,
 }: AddClinicDialogProps) {
+  const [loading, setLoading] = useState(false);
   const CreateClinicSchema = Yup.object().shape({
-    name: Yup.string().required("Clinic name is required"),
-    email: Yup.string().required("Clinic email is required"),
+    clinicName: Yup.string().required("Clinic name is required"),
+    doctorName: Yup.string().required("Docter name is required"),
+    doctorEmail: Yup.string().required("Docter email is required"),
     phone: Yup.string()
       .matches(/^[6-9]\d{9}$/, "Enter a valid 10 digit mobile number")
       .required("Mobile number is required"),
   });
   const formik = useFormik({
-    initialValues: { name: "", email: "", phone: "" },
+    initialValues: {
+      clinicName: "",
+      doctorName: "",
+      doctorEmail: "",
+      phone: "",
+    },
     validationSchema: CreateClinicSchema,
     onSubmit: (values) => handleCreateClinic(values),
   });
 
-  const handleCreateClinic = (values: {
-    name: string;
-    email: string;
+  const handleCreateClinic = async (values: {
+    clinicName: string;
+    doctorName: string;
+    doctorEmail: string;
     phone: string;
   }) => {
-    console.log(values);
+    try {
+      setLoading(true);
+      const response = await api.post<{ success: boolean; message: string }>(
+        "/internal/clinics",
+        {
+          clinicName: values.clinicName,
+          doctorName: values.doctorName,
+          doctorEmail: values.doctorEmail,
+          phone: values.phone,
+        },
+      );
+      if (response && response.data && response.data.success) {
+        toast.success("Success", { description: response.data.message });
+        onCloseDialog(false);
+      }
+    } catch (error) {
+      errorHandler(error);
+    } finally {
+      setLoading(false);
+    }
   };
   return (
     <Dialog open={showDialog} onOpenChange={onCloseDialog}>
@@ -56,16 +88,16 @@ export default function AddClinicDialog({
         </DialogHeader>
         <form noValidate onSubmit={formik.handleSubmit} className="space-y-5">
           <div className="flex flex-col gap-1.5 w-full">
-            <Label htmlFor="clinic-name">Name</Label>
+            <Label htmlFor="clinic-name">Clinic Name</Label>
             <InputGroup>
               <InputGroupInput
                 id="clinic-name"
                 autoComplete="name"
                 type="text"
                 placeholder="Enter clinic name"
-                name="name"
+                name="clinicName"
                 onChange={formik.handleChange}
-                value={formik.values.name}
+                value={formik.values.clinicName}
                 onBlur={formik.handleBlur}
                 autoFocus
               />
@@ -73,33 +105,12 @@ export default function AddClinicDialog({
                 <Stethoscope />
               </InputGroupAddon>
             </InputGroup>
-            {formik.touched.name && formik.errors.name && (
-              <p className="text-error">{formik.errors.name}</p>
+            {formik.touched.clinicName && formik.errors.clinicName && (
+              <p className="text-error">{formik.errors.clinicName}</p>
             )}
           </div>
           <div className="flex flex-col gap-1.5 w-full">
-            <Label htmlFor="clinic-email">Email</Label>
-            <InputGroup>
-              <InputGroupInput
-                id="clinic-email"
-                autoComplete="email"
-                type="email"
-                placeholder="clinic_email@example.com"
-                name="email"
-                onChange={formik.handleChange}
-                value={formik.values.email}
-                onBlur={formik.handleBlur}
-              />
-              <InputGroupAddon>
-                <Mail />
-              </InputGroupAddon>
-            </InputGroup>
-            {formik.touched.email && formik.errors.email && (
-              <p className="text-error">{formik.errors.email}</p>
-            )}
-          </div>
-          <div className="flex flex-col gap-1.5 w-full">
-            <Label htmlFor="clinic-phone">Phone</Label>
+            <Label htmlFor="clinic-phone">Clinic Phone</Label>
             <InputGroup>
               <InputGroupInput
                 id="clinic-phone"
@@ -114,6 +125,7 @@ export default function AddClinicDialog({
                 }}
                 value={formik.values.phone}
                 onBlur={formik.handleBlur}
+                disabled={loading}
               />
               <InputGroupAddon>
                 <Phone />
@@ -123,7 +135,54 @@ export default function AddClinicDialog({
               <p className="text-error">{formik.errors.phone}</p>
             )}
           </div>
-          <Button type="submit">Create clinic</Button>
+          <div className="flex flex-col gap-1.5 w-full">
+            <Label htmlFor="doctor-name">Doctor Name</Label>
+            <InputGroup>
+              <InputGroupInput
+                id="doctor-name"
+                autoComplete="name"
+                type="text"
+                placeholder="Enter doctor name"
+                name="doctorName"
+                onChange={formik.handleChange}
+                value={formik.values.doctorName}
+                onBlur={formik.handleBlur}
+                disabled={loading}
+              />
+              <InputGroupAddon>
+                <User2 />
+              </InputGroupAddon>
+            </InputGroup>
+            {formik.touched.doctorName && formik.errors.doctorName && (
+              <p className="text-error">{formik.errors.doctorName}</p>
+            )}
+          </div>
+          <div className="flex flex-col gap-1.5 w-full">
+            <Label htmlFor="clinic-email">Doctor Email</Label>
+            <InputGroup>
+              <InputGroupInput
+                id="clinic-email"
+                autoComplete="email"
+                type="email"
+                placeholder="your_email@example.com"
+                name="doctorEmail"
+                onChange={formik.handleChange}
+                value={formik.values.doctorEmail}
+                onBlur={formik.handleBlur}
+                disabled={loading}
+              />
+              <InputGroupAddon>
+                <Mail />
+              </InputGroupAddon>
+            </InputGroup>
+            {formik.touched.doctorEmail && formik.errors.doctorEmail && (
+              <p className="text-error">{formik.errors.doctorEmail}</p>
+            )}
+          </div>
+          <Button type="submit">
+            {loading && <Spinner />}
+            Create clinic
+          </Button>
         </form>
       </DialogContent>
     </Dialog>

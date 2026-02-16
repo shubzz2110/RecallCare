@@ -26,6 +26,13 @@ const AppRoutes = createBrowserRouter([
           })),
       },
       {
+        path: "setup-password",
+        lazy: () =>
+          import("./routes/auth/SetupPassword").then((module) => ({
+            element: <module.default />,
+          })),
+      },
+      {
         element: <Protected />,
         children: [
           {

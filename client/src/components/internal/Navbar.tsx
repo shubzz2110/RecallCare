@@ -6,6 +6,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
+import { useAuthStore } from "@/store/auth";
 
 export default function InternalNavbar() {
   return (
@@ -28,7 +29,10 @@ export default function InternalNavbar() {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-40">
-          <DropdownMenuItem variant="destructive">
+          <DropdownMenuItem
+            onClick={() => useAuthStore.getState().logout()}
+            variant="destructive"
+          >
             <LogOut className="h-4 w-4 mr-2" />
             Logout
           </DropdownMenuItem>
