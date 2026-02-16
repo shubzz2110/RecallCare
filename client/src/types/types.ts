@@ -8,3 +8,18 @@ export interface User {
   };
   role?: "ADMIN" | "CLINIC";
 }
+
+export interface InternalClinics {
+  id: string;
+  name: string;
+  phone: string | null;
+  address: string | null;
+  isActive: boolean;
+  users: {
+    name: string;
+    email: string;
+    isActive: boolean;
+  }[];
+  createdAt: string;
+  updatedAt: string;
+}

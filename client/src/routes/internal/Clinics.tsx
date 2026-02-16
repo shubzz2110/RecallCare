@@ -15,16 +15,52 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { api } from "@/lib/api";
 import { setTitle } from "@/lib/set-title";
+import { errorHandler } from "@/lib/utils";
+import type { InternalClinics } from "@/types/types";
 import { Plus, Search, Stethoscope } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import moment from "moment";
 
 export default function Clinics() {
   const [showCreateClinicDialog, setShowCreateClinicDialog] =
     useState<boolean>(false);
+  const [loading, setLoading] = useState(false);
+  const [clinics, setClinics] = useState<InternalClinics[]>([]);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     setTitle("Internal | Clinics");
+  }, []);
+
+  const fetchClinics = async () => {
+    try {
+      setLoading(true);
+      const response = await api.get<{
+        success: boolean;
+        clinics: InternalClinics[];
+      }>("/internal/clinics");
+      setClinics(response.data.clinics || []);
+    } catch (error) {
+      errorHandler(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const searchableClinics = useMemo(() => {
+    if (!search.trim()) return clinics;
+
+    const term = search.toLowerCase();
+
+    return clinics.filter((clinic) => {
+      return clinic.name.toLowerCase().includes(term);
+    });
+  }, [clinics, search]);
+
+  useEffect(() => {
+    fetchClinics();
   }, []);
 
   return (
@@ -42,7 +78,11 @@ export default function Clinics() {
       </div>
       <div className="flex">
         <InputGroup className="max-w-xs">
-          <InputGroupInput placeholder="Search by name, email..." />
+          <InputGroupInput
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search by name, email..."
+          />
           <InputGroupAddon>
             <Search />
           </InputGroupAddon>
@@ -53,27 +93,53 @@ export default function Clinics() {
           <TableRow className="bg-muted hover:bg-muted">
             <TableHead>ID</TableHead>
             <TableHead className="w-1/5">Name</TableHead>
-            <TableHead className="w-1/5">Email</TableHead>
-            <TableHead>Phone</TableHead>
+            <TableHead className="w-1/5">Phone</TableHead>
+            <TableHead>Added on</TableHead>
             <TableHead>Status</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          <TableRow>
-            <TableCell>uisefyiwe862^&%7jhs</TableCell>
-            <TableCell>SmileCare Clinic</TableCell>
-            <TableCell>homkar1997@gmail.com</TableCell>
-            <TableCell>+91 9921665205</TableCell>
-            <TableCell>
-              <Badge className="bg-secondary">Onboarded</Badge>
-            </TableCell>
-          </TableRow>
+          {loading ? (
+            <TableRow>
+              <TableCell colSpan={5} className="text-center py-10">
+                Loading clinics...
+              </TableCell>
+            </TableRow>
+          ) : searchableClinics.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={5} className="text-center py-10">
+                No clinics found
+              </TableCell>
+            </TableRow>
+          ) : (
+            searchableClinics.map((clinic) => {
+              const doctor = clinic.users?.[0];
+              return (
+                <TableRow key={clinic.id}>
+                  <TableCell>{clinic.id}</TableCell>
+                  <TableCell>{clinic.name}</TableCell>
+                  <TableCell>{clinic.phone}</TableCell>
+                  <TableCell>
+                    {moment(clinic.createdAt).format("MMM DD, YYYY")}
+                  </TableCell>
+                  <TableCell>
+                    {doctor.isActive ? (
+                      <Badge className="bg-secondary">Onboarded</Badge>
+                    ) : (
+                      <Badge className="">Pending</Badge>
+                    )}
+                  </TableCell>
+                </TableRow>
+              );
+            })
+          )}
         </TableBody>
       </Table>
       {showCreateClinicDialog && (
         <AddClinicDialog
           showDialog={showCreateClinicDialog}
           onCloseDialog={setShowCreateClinicDialog}
+          fetchClinics={fetchClinics}
         />
       )}
     </div>

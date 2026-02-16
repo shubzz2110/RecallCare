@@ -24,11 +24,13 @@ import { errorHandler } from "@/lib/utils";
 interface AddClinicDialogProps {
   showDialog: boolean;
   onCloseDialog: (show: boolean) => void;
+  fetchClinics: () => void;
 }
 
 export default function AddClinicDialog({
   showDialog,
   onCloseDialog,
+  fetchClinics,
 }: AddClinicDialogProps) {
   const [loading, setLoading] = useState(false);
   const CreateClinicSchema = Yup.object().shape({
@@ -69,6 +71,7 @@ export default function AddClinicDialog({
       );
       if (response && response.data && response.data.success) {
         toast.success("Success", { description: response.data.message });
+        fetchClinics();
         onCloseDialog(false);
       }
     } catch (error) {

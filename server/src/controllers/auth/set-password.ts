@@ -19,6 +19,7 @@ const setPassword = async (req: Request, res: Response) => {
       data: {
         password: hashedPassword,
         setupToken: null,
+        isActive: true,
       },
     });
 
