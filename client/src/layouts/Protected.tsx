@@ -15,8 +15,6 @@ export default function Protected() {
     return () => clearTimeout(timer);
   }, []);
 
-  console.log(user);
-
   if (checking) return null;
 
   if (!user) return <Navigate to="/login" replace />;

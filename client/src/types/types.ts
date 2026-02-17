@@ -23,3 +23,12 @@ export interface InternalClinics {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface Patient {
+  id: string;
+  name: string;
+  phone: string;
+  notes?: string;
+  clinicId: string;
+  createdAt: string;
+}

@@ -40,14 +40,14 @@ export default function AppNavbar() {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-40">
           <DropdownMenuItem onClick={() => navigate("/settings")}>
-            <Settings className="h-4 w-4 mr-2" />
+            <Settings className="h-4 w-4" />
             Settings
           </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() => useAuthStore.getState().logout()}
             variant="destructive"
           >
-            <LogOut className="h-4 w-4 mr-2" />
+            <LogOut className="h-4 w-4" />
             Logout
           </DropdownMenuItem>
         </DropdownMenuContent>
