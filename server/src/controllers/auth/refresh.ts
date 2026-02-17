@@ -14,6 +14,9 @@ interface RefreshTokenPayload {
   exp: number;
 }
 
+const ACCESS_TOKEN_LIFETIME = 15 * 60; // 15 minutes
+const REFRESH_TOKEN_LIFETIME = 7 * 24 * 60 * 60; // 7 days
+
 const refreshTokenController = async (req: Request, res: Response) => {
   try {
     const refreshToken = req.cookies?.refreshToken;
@@ -47,13 +50,13 @@ const refreshTokenController = async (req: Request, res: Response) => {
     const accessToken = jwt.sign(
       { user: { id: user.id, clinicId: user.clinicId, role: user.role } },
       ACCESS_TOKEN_SECRET!,
-      { expiresIn: "15m" },
+      { expiresIn: ACCESS_TOKEN_LIFETIME },
     );
 
     const newRefreshToken = jwt.sign(
       { user: { id: user.id, clinicId: user.clinicId, role: user.role } },
       REFRESH_TOKEN_SECRET!,
-      { expiresIn: "7d" },
+      { expiresIn: REFRESH_TOKEN_LIFETIME },
     );
 
     const userDetails = {
@@ -65,7 +68,7 @@ const refreshTokenController = async (req: Request, res: Response) => {
     };
 
     res.cookie("refreshToken", newRefreshToken, {
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days,
+      maxAge: REFRESH_TOKEN_LIFETIME * 1000,
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",

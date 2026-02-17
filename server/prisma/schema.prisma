@@ -50,7 +50,7 @@ model Clinic {
 model Patient {
   id        String   @id @default(uuid())
   name      String
-  phone     String
+  phone     String   @unique
   notes     String?
   clinicId  String
   clinic    Clinic   @relation(fields: [clinicId], references: [id])

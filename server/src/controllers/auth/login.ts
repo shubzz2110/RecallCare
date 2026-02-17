@@ -4,6 +4,9 @@ import { prisma } from "../../config/prisma";
 import bcrypt from "bcryptjs";
 import { ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET } from "../../config/env";
 
+const ACCESS_TOKEN_LIFETIME = 15 * 60; // 15 minutes
+const REFRESH_TOKEN_LIFETIME = 7 * 24 * 60 * 60; // 7 days
+
 const loginController = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
@@ -30,13 +33,13 @@ const loginController = async (req: Request, res: Response) => {
     const accessToken = jwt.sign(
       { user: { id: user.id, clinicId: user.clinicId, role: user.role } },
       ACCESS_TOKEN_SECRET!,
-      { expiresIn: "15m" },
+      { expiresIn: ACCESS_TOKEN_LIFETIME },
     );
 
     const refreshToken = jwt.sign(
       { user: { id: user.id, clinicId: user.clinicId, role: user.role } },
       REFRESH_TOKEN_SECRET!,
-      { expiresIn: "7d" },
+      { expiresIn: REFRESH_TOKEN_LIFETIME },
     );
 
     const userDetails = {
@@ -47,7 +50,7 @@ const loginController = async (req: Request, res: Response) => {
       role: user.role,
     };
     res.cookie("refreshToken", refreshToken, {
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days,
+      maxAge: REFRESH_TOKEN_LIFETIME * 1000,
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",

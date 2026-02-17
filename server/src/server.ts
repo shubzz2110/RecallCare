@@ -5,13 +5,14 @@ import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
 import http from "node:http";
-import rateLimit from "express-rate-limit";
+// import rateLimit from "express-rate-limit";
 import cookieParser from "cookie-parser";
 
 // Routes imports
 import internalRoutes from "./routes/internal";
 import authRoutes from "./routes/auth";
 import testRoute from "./routes/test";
+import patientRoutes from "./routes/patient";
 
 const PORT = process.env.PORT || 8000;
 
@@ -36,6 +37,7 @@ app.use(cookieParser());
 app.use("/api/auth", authRoutes);
 app.use("/api/internal", internalRoutes);
 app.use("/api", testRoute);
+app.use("/api/patients", patientRoutes);
 
 const startServer = async () => {
   try {
