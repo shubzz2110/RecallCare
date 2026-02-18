@@ -9,14 +9,19 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
+import { useNavigate } from "react-router";
 
 interface PatientRowProps {
   patient: Patient;
 }
 
 export default function PatientRow({ patient }: PatientRowProps) {
+  const navigate = useNavigate();
   return (
-    <TableRow>
+    <TableRow
+      className="cursor-pointer"
+      onClick={() => navigate(`/patients/${patient.id}`)}
+    >
       <TableCell className="font-semibold">{patient.name}</TableCell>
       <TableCell className="font-semibold">+91 {patient.phone}</TableCell>
       <TableCell>-</TableCell>

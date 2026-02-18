@@ -8,6 +8,7 @@ import Clinics from "./routes/internal/Clinics";
 import InternalLayout from "./layouts/Internal";
 import RootLayout from "./layouts/Root";
 import HomeRedirect from "./routes/Home";
+import PatientHistory from "./routes/patients/[id]/PatientHistory";
 
 const AppRoutes = createBrowserRouter([
   {
@@ -42,6 +43,10 @@ const AppRoutes = createBrowserRouter([
           {
             path: "patients",
             element: <Patients />,
+          },
+          {
+            path: "patients/:id",
+            element: <PatientHistory />,
           },
           {
             path: "appointments",

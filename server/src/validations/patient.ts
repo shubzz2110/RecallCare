@@ -9,3 +9,7 @@ export const createPatientSchema = z.object({
   name: z.string(),
   notes: z.string().optional(),
 });
+
+export const getPatientSchema = z.object({
+  patientId: z.string(),
+});
