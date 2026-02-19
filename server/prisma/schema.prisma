@@ -58,17 +58,33 @@ model Patient {
 
   appointments Appointment[]
   followups    FollowUp[]
+
+  @@index([name])
+  @@index([clinicId])
+  @@index([phone])
+}
+
+enum AppointmentStatus {
+  SCHEDULED
+  COMPLETED
+  MISSED
 }
 
 model Appointment {
-  id        String   @id @default(uuid())
-  clinicId  String
-  patientId String
-  datetime  DateTime
-  status    String   @default("scheduled")
+  id           String            @id @default(uuid())
+  clinicId     String
+  patientId    String
+  visitDate    DateTime
+  followUpDate DateTime?
+  notes        String?
+  status       AppointmentStatus @default(SCHEDULED)
 
   clinic  Clinic  @relation(fields: [clinicId], references: [id])
   patient Patient @relation(fields: [patientId], references: [id])
+
+  @@index([clinicId, visitDate])
+  @@index([clinicId, followUpDate])
+  @@index([patientId])
 }
 
 model FollowUp {

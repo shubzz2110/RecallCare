@@ -1,6 +1,9 @@
 -- CreateEnum
 CREATE TYPE "UserRole" AS ENUM ('ADMIN', 'CLINIC');
 
+-- CreateEnum
+CREATE TYPE "AppointmentStatus" AS ENUM ('SCHEDULED', 'COMPLETED', 'MISSED');
+
 -- CreateTable
 CREATE TABLE "User" (
     "id" TEXT NOT NULL,
@@ -45,8 +48,10 @@ CREATE TABLE "Appointment" (
     "id" TEXT NOT NULL,
     "clinicId" TEXT NOT NULL,
     "patientId" TEXT NOT NULL,
-    "datetime" TIMESTAMP(3) NOT NULL,
-    "status" TEXT NOT NULL DEFAULT 'scheduled',
+    "visitDate" TIMESTAMP(3) NOT NULL,
+    "followUpDate" TIMESTAMP(3),
+    "notes" TEXT,
+    "status" "AppointmentStatus" NOT NULL DEFAULT 'SCHEDULED',
 
     CONSTRAINT "Appointment_pkey" PRIMARY KEY ("id")
 );
@@ -66,6 +71,24 @@ CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "User_setupToken_key" ON "User"("setupToken");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Patient_phone_key" ON "Patient"("phone");
+
+-- CreateIndex
+CREATE INDEX "Patient_name_clinicId_idx" ON "Patient"("name", "clinicId");
+
+-- CreateIndex
+CREATE INDEX "Patient_phone_idx" ON "Patient"("phone");
+
+-- CreateIndex
+CREATE INDEX "Appointment_clinicId_visitDate_idx" ON "Appointment"("clinicId", "visitDate");
+
+-- CreateIndex
+CREATE INDEX "Appointment_clinicId_followUpDate_idx" ON "Appointment"("clinicId", "followUpDate");
+
+-- CreateIndex
+CREATE INDEX "Appointment_patientId_idx" ON "Appointment"("patientId");
 
 -- AddForeignKey
 ALTER TABLE "User" ADD CONSTRAINT "User_clinicId_fkey" FOREIGN KEY ("clinicId") REFERENCES "Clinic"("id") ON DELETE SET NULL ON UPDATE CASCADE;

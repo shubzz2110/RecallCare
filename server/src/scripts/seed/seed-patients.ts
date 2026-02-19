@@ -6,6 +6,8 @@ async function main() {
 
   const positionalArguments = args.filter((a) => !a.startsWith("--"));
 
+  console.log(positionalArguments[0]);
+
   const clinicId = positionalArguments[0];
   const seedPatientsCount = Number(positionalArguments[1]) || 50;
 
