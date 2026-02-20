@@ -15,13 +15,14 @@ import {
   InputGroupInput,
 } from "@/components/ui/input-group";
 import { Eye, EyeOff, Lock, Mail } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
 import type { User } from "@/types/types";
 import { useAuthStore } from "@/store/auth";
 import { Spinner } from "@/components/ui/spinner";
 import { AxiosError } from "axios";
 import { toast } from "sonner";
+import { Navigate } from "react-router";
 
 interface LoginResponse {
   success: boolean;
@@ -39,7 +40,7 @@ export default function Login() {
   const LoginSchema = Yup.object().shape({
     email: Yup.string()
       .email("Enter a valid email")
-      .required("Clinic Email is required"),
+      .required("Email is required"),
     password: Yup.string().required("Password is required"),
   });
 
@@ -94,6 +95,17 @@ export default function Login() {
       setLoading(false);
     }
   };
+
+  const user = useAuthStore.getState().user;
+  const [checking, setChecking] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setChecking(false), 300);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (checking) return null;
+  if (user) return <Navigate to="/dashboard" replace />;
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-muted/40 px-4">

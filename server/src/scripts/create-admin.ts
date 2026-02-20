@@ -1,32 +1,30 @@
 import bcrypt from "bcryptjs";
-import { prisma } from "../config/prisma";
-import { UserRole } from "../generated/prisma/enums";
+import dotenv from "dotenv";
+dotenv.config();
+import { User } from "../models/User";
+import mongoose from "mongoose";
+import connectToDatabase from "../config/db";
 
 async function main() {
+  connectToDatabase();
   const email = "homkar1997@gmail.com";
   const password = "AdminPassword123!";
   const name = "Shubham Homkar";
 
   // check if already exists
-  const existing = await prisma.user.findUnique({
-    where: { email },
-  });
+  const existing = await User.findOne({ email });
 
   if (existing) {
     console.log("Admin already exists");
     return;
   }
 
-  const passwordHash = await bcrypt.hash(password, 10);
-
-  await prisma.user.create({
-    data: {
-      email,
-      name,
-      password: passwordHash,
-      role: UserRole.ADMIN,
-      isActive: true,
-    },
+  await User.create({
+    email,
+    name,
+    password: password,
+    role: "ADMIN",
+    isActive: true,
   });
 
   console.log("Admin user created successfully!");
@@ -37,5 +35,6 @@ async function main() {
 main()
   .catch((e) => console.error(e))
   .finally(async () => {
-    await prisma.$disconnect();
+    await mongoose.disconnect();
+    console.log("Database connection closed successfully");
   });

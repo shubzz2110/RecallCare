@@ -121,7 +121,7 @@ export default function SetupPassword() {
                   <InputGroupInput
                     id="signup-password"
                     autoComplete="new-password"
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     name="password"
                     placeholder="Enter your password"
                     value={formik.values.password}

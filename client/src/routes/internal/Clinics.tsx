@@ -113,7 +113,7 @@ export default function Clinics() {
             </TableRow>
           ) : (
             searchableClinics.map((clinic) => {
-              const doctor = clinic.users?.[0];
+              const doctor = clinic.users?.[0] || null;
               return (
                 <TableRow key={clinic.id}>
                   <TableCell>{clinic.id}</TableCell>
@@ -123,7 +123,7 @@ export default function Clinics() {
                     {moment(clinic.createdAt).format("MMM DD, YYYY")}
                   </TableCell>
                   <TableCell>
-                    {doctor.isActive ? (
+                    {doctor && doctor.isActive ? (
                       <Badge className="bg-secondary">Onboarded</Badge>
                     ) : (
                       <Badge className="">Pending</Badge>

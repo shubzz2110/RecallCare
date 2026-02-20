@@ -1,13 +1,12 @@
 import { Request, Response } from "express";
-import { UserRole } from "../../generated/prisma/enums";
 import jwt from "jsonwebtoken";
 import { ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET } from "../../config/env";
-import { prisma } from "../../config/prisma";
+import { Role, User } from "../../models/User";
 
 interface RefreshTokenPayload {
   user: {
-    id: string;
-    role?: UserRole;
+    _id: string;
+    role?: Role;
     clinicId?: string;
   };
   iat: number;
@@ -32,14 +31,9 @@ const refreshTokenController = async (req: Request, res: Response) => {
       REFRESH_TOKEN_SECRET!,
     ) as unknown as RefreshTokenPayload;
 
-    const user = await prisma.user.findUnique({
-      where: { id: decoded.user.id },
-      include: {
-        clinic: {
-          select: { name: true },
-        },
-      },
-      omit: { role: false },
+    const user = await User.findById(decoded.user._id).populate({
+      path: "clinic",
+      select: "name",
     });
 
     if (!user)
@@ -48,19 +42,19 @@ const refreshTokenController = async (req: Request, res: Response) => {
         .json({ success: false, message: "USER NOT FOUND" });
 
     const accessToken = jwt.sign(
-      { user: { id: user.id, clinicId: user.clinicId, role: user.role } },
+      { user: { _id: user._id, clinicId: user.clinic, role: user.role } },
       ACCESS_TOKEN_SECRET!,
       { expiresIn: ACCESS_TOKEN_LIFETIME },
     );
 
     const newRefreshToken = jwt.sign(
-      { user: { id: user.id, clinicId: user.clinicId, role: user.role } },
+      { user: { _id: user._id, clinicId: user.clinic, role: user.role } },
       REFRESH_TOKEN_SECRET!,
       { expiresIn: REFRESH_TOKEN_LIFETIME },
     );
 
     const userDetails = {
-      id: user?.id,
+      _id: user?._id,
       email: user?.email,
       name: user?.name,
       clinic: user?.clinic,

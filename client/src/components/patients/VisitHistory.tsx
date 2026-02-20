@@ -9,6 +9,14 @@ import {
 } from "../ui/table";
 import { Badge } from "../ui/badge";
 
+// interface VisitsResponse {
+//   success: boolean;
+//   appointments: Patient[];
+//   patientsCount: number;
+// }
+
+// async function fetchVisits() {}
+
 export default function VisitHistory() {
   return (
     <Table>

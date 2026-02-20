@@ -7,14 +7,12 @@ import morgan from "morgan";
 import http from "node:http";
 // import rateLimit from "express-rate-limit";
 import cookieParser from "cookie-parser";
+import connectToDatabase from "./config/db";
 
-// Routes imports
-import internalRoutes from "./routes/internal";
 import authRoutes from "./routes/auth";
-import testRoute from "./routes/test";
-import patientRoutes from "./routes/patient";
+import internalRoutes from "./routes/internal";
 
-const PORT = process.env.PORT || 8000;
+const PORT = 4000;
 
 const app = express();
 const server = http.createServer(app);
@@ -36,11 +34,10 @@ app.use(cookieParser());
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/internal", internalRoutes);
-app.use("/api", testRoute);
-app.use("/api/patients", patientRoutes);
 
 const startServer = async () => {
   try {
+    await connectToDatabase();
     server.listen(PORT, () => {
       console.log(
         `Recallcare Backend server running on http://localhost:${PORT}`,

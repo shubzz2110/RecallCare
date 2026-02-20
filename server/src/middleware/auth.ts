@@ -1,13 +1,12 @@
 import jwt from "jsonwebtoken";
 import { NextFunction, Request, Response } from "express";
 import { ACCESS_TOKEN_SECRET } from "../config/env";
-import { UserRole } from "../generated/prisma/enums";
-import { prisma } from "../config/prisma";
+import { Role, User } from "../models/User";
 
 interface TokenPayload {
   user: {
-    id: string;
-    role?: UserRole;
+    _id: string;
+    role?: Role;
     clinicId?: string;
   };
   iat: number;
@@ -36,13 +35,11 @@ export const authenticate = async (
       });
     }
 
-    const user = await prisma.user.findUnique({
-      where: { id: decoded.user.id },
-    });
+    const user = await User.findById(decoded.user._id);
     if (!user || !user.isActive)
       return res.status(401).json({ message: "User inactive or deleted" });
 
-    if (user.clinicId !== decoded.user.clinicId)
+    if (user.clinic !== decoded.user.clinicId)
       return res.status(403).json({
         success: false,
         message: "Not a valid clinic member",

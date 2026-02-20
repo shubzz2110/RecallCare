@@ -1,3 +1,4 @@
+import { useFormik } from "formik";
 import {
   Dialog,
   DialogContent,
@@ -5,17 +6,87 @@ import {
   DialogHeader,
   DialogTitle,
 } from "../ui/dialog";
+import * as yup from "yup";
+import { Label } from "../ui/label";
+import { DatePickerInput } from "@/components/ui/date-picker-input";
+import { Textarea } from "../ui/textarea";
+import { Button } from "../ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { errorHandler } from "@/lib/utils";
+import { api } from "@/lib/api";
+import { useParams } from "react-router";
+import { useState } from "react";
 
 interface AddVisitDialogProps {
   showDialog: boolean;
   onCloseDialog: (show: boolean) => void;
 }
 
+/** Convert an ISO string to a Date object, or undefined if empty */
+function toDateObject(dateStr?: string | null): Date | undefined {
+  if (!dateStr) return undefined;
+  const d = new Date(dateStr);
+  return isNaN(d.getTime()) ? undefined : d;
+}
+
 export default function AddVisitModal({
   showDialog,
   onCloseDialog,
 }: AddVisitDialogProps) {
-  console.log(showDialog);
+  const { id: patientId } = useParams();
+  const [loading, setLoading] = useState(false);
+
+  const AddVisitSchema = yup.object().shape({
+    visitDate: yup.string(),
+    notes: yup.string().notRequired(),
+    followUpDate: yup.string().datetime().notRequired(),
+    status: yup
+      .string()
+      .oneOf(["COMPLETED", "MISSED"])
+      .required("Status is required"),
+  });
+
+  const formik = useFormik({
+    initialValues: {
+      visitDate: new Date(),
+      notes: "",
+      followUpDate: "",
+      status: "COMPLETED",
+    },
+    validationSchema: AddVisitSchema,
+    onSubmit: (values) => handleAddVisit(values),
+  });
+
+  const handleAddVisit = async (values: {
+    visitDate: string | Date;
+    notes?: string;
+    followUpDate?: string;
+    status: string;
+  }) => {
+    try {
+      setLoading(true);
+      await api.post("/appointments", {
+        visitDate: values.visitDate,
+        notes: values.notes,
+        followUpDate: values.followUpDate,
+        status: values.status,
+        patientId: patientId,
+      });
+      onCloseDialog(false);
+    } catch (error) {
+      errorHandler(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <Dialog
       open={showDialog}
@@ -31,6 +102,77 @@ export default function AddVisitModal({
             Fill the following fields to create a visit
           </DialogDescription>
         </DialogHeader>
+        <h1 className="text-muted-foreground font-normal text-sm">
+          <span className="text-destructive">*</span>Indicates required fields
+        </h1>
+        <form noValidate onSubmit={formik.handleSubmit} className="space-y-5">
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="add-visit-date">
+              Visit Date<span className="text-destructive">*</span>
+            </Label>
+            <DatePickerInput
+              id="add-visit-date"
+              value={toDateObject(String(formik.values.visitDate))}
+              onChange={(date) => {
+                if (date) {
+                  formik.setFieldValue("visitDate", date);
+                }
+              }}
+              placeholder="DD/MM/YYYY"
+              required
+              disabled={loading}
+            />
+            {formik.touched.visitDate && formik.errors.visitDate && (
+              <p className="text-error">{String(formik.errors.visitDate)}</p>
+            )}
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="add-visit-notes">Treatment Notes</Label>
+            <Textarea
+              placeholder="Enter treatment notes"
+              rows={4}
+              value={formik.values.notes}
+              onChange={formik.handleChange}
+              name="notes"
+              disabled={loading}
+            />
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="add-visit-follow">Follow Up Date</Label>
+            <DatePickerInput
+              id="add-visit-follow"
+              value={toDateObject(String(formik.values.followUpDate))}
+              onChange={(date) => {
+                if (date) {
+                  formik.setFieldValue("followUpDate", date);
+                }
+              }}
+              placeholder="DD/MM/YYYY"
+              disabled={loading}
+            />
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="add-visit-follow">
+              Status<span className="text-destructive">*</span>
+            </Label>
+            <Select
+              value={formik.values.status}
+              onValueChange={(value) => formik.setFieldValue("status", value)}
+              disabled={loading}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select status" />
+              </SelectTrigger>
+              <SelectContent position="popper">
+                <SelectGroup>
+                  <SelectItem value="COMPLETED">Completed</SelectItem>
+                  <SelectItem value="MISSED">Missed</SelectItem>
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          </div>
+          <Button type="submit">Add Visit</Button>
+        </form>
       </DialogContent>
     </Dialog>
   );

@@ -1,14 +1,13 @@
 import { Request, Response } from "express";
-import { prisma } from "../../config/prisma";
+import { Clinic } from "../../models/Clinic";
+
 const getClinicsController = async (req: Request, res: Response) => {
   try {
-    const clinics = await prisma.clinic.findMany({
-      include: {
-        users: {
-          select: { name: true, email: true, isActive: true },
-        },
-      },
+    const clinics = await Clinic.find().populate({
+      path: "users",
+      select: "name email isActive",
     });
+
     return res.json({ success: true, clinics });
   } catch (error) {
     console.log("Error fetching clinics", error);
