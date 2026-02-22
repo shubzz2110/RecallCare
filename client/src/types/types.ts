@@ -1,16 +1,16 @@
 export interface User {
-  id: string;
+  _id: string;
   name: string;
   email: string;
   clinic?: {
-    id: string;
+    _id: string;
     name: string;
   };
   role?: "ADMIN" | "CLINIC";
 }
 
 export interface InternalClinics {
-  id: string;
+  _id: string;
   name: string;
   phone: string | null;
   address: string | null;
@@ -25,7 +25,7 @@ export interface InternalClinics {
 }
 
 export interface Patient {
-  id: string;
+  _id: string;
   name: string;
   phone: string;
   notes?: string;

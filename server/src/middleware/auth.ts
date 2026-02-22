@@ -39,7 +39,7 @@ export const authenticate = async (
     if (!user || !user.isActive)
       return res.status(401).json({ message: "User inactive or deleted" });
 
-    if (user.clinic !== decoded.user.clinicId)
+    if (!user.clinic?.equals(decoded.user.clinicId))
       return res.status(403).json({
         success: false,
         message: "Not a valid clinic member",

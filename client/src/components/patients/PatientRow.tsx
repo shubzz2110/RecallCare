@@ -20,7 +20,7 @@ export default function PatientRow({ patient }: PatientRowProps) {
   return (
     <TableRow
       className="cursor-pointer"
-      onClick={() => navigate(`/patients/${patient.id}`)}
+      onClick={() => navigate(`/patients/${patient._id}`)}
     >
       <TableCell className="font-semibold">{patient.name}</TableCell>
       <TableCell className="font-semibold">+91 {patient.phone}</TableCell>

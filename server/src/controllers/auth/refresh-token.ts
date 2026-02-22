@@ -31,10 +31,7 @@ const refreshTokenController = async (req: Request, res: Response) => {
       REFRESH_TOKEN_SECRET!,
     ) as unknown as RefreshTokenPayload;
 
-    const user = await User.findById(decoded.user._id).populate({
-      path: "clinic",
-      select: "name",
-    });
+    const user = await User.findById(decoded.user._id);
 
     if (!user)
       return res

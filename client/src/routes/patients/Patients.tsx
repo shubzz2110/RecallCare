@@ -145,7 +145,7 @@ export default function Patients() {
               </TableRow>
             ) : (
               patients.map((patient) => (
-                <PatientRow key={patient.id} patient={patient} />
+                <PatientRow key={patient._id} patient={patient} />
               ))
             )}
           </TableBody>

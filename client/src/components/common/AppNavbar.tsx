@@ -9,15 +9,41 @@ import {
 import { SidebarTrigger } from "../ui/sidebar";
 import { useNavigate } from "react-router";
 import { useAuthStore } from "@/store/auth";
+import { useEffect, useState } from "react";
+import { errorHandler } from "@/lib/utils";
+import { api } from "@/lib/api";
+import { Skeleton } from "../ui/skeleton";
 
 export default function AppNavbar() {
   const navigate = useNavigate();
+  const [clinic, setClinic] = useState<{ _id: string; name: string } | null>(
+    null,
+  );
+  const [loading, setLoading] = useState(false);
 
   const today = new Date().toLocaleDateString("en-IN", {
     weekday: "long",
     day: "numeric",
     month: "long",
   });
+
+  const fetchClinic = async () => {
+    try {
+      setLoading(true);
+      const response = await api.get(
+        `/clinics/${useAuthStore.getState().user?.clinic}`,
+      );
+      setClinic(response.data.clinic);
+    } catch (error) {
+      errorHandler(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchClinic();
+  }, []);
 
   return (
     <header className="flex items-center justify-between w-full h-16 sticky top-0 left-0 border-b border-border px-4 lg:px-8 bg-white/70 backdrop-blur-sm z-10">
@@ -34,7 +60,8 @@ export default function AppNavbar() {
               Clinic
             </span>
             <span className="text-foreground font-medium text-sm leading-3">
-              {useAuthStore.getState().user?.clinic?.name || "Unknown Clinic"}
+              {loading && <Skeleton className="h-3 w-8" />}
+              {clinic?.name || "Unknown Clinic"}
             </span>
           </Button>
         </DropdownMenuTrigger>
