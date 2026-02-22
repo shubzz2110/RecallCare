@@ -11,14 +11,6 @@ import { Label } from "../ui/label";
 import { DatePickerInput } from "@/components/ui/date-picker-input";
 import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { errorHandler } from "@/lib/utils";
 import { api } from "@/lib/api";
 import { useParams } from "react-router";
@@ -46,11 +38,7 @@ export default function AddVisitModal({
   const AddVisitSchema = yup.object().shape({
     visitDate: yup.string(),
     notes: yup.string().notRequired(),
-    followUpDate: yup.string().datetime().notRequired(),
-    status: yup
-      .string()
-      .oneOf(["COMPLETED", "MISSED"])
-      .required("Status is required"),
+    followUpDate: yup.string().notRequired(),
   });
 
   const formik = useFormik({
@@ -58,7 +46,6 @@ export default function AddVisitModal({
       visitDate: new Date(),
       notes: "",
       followUpDate: "",
-      status: "COMPLETED",
     },
     validationSchema: AddVisitSchema,
     onSubmit: (values) => handleAddVisit(values),
@@ -68,15 +55,13 @@ export default function AddVisitModal({
     visitDate: string | Date;
     notes?: string;
     followUpDate?: string;
-    status: string;
   }) => {
     try {
       setLoading(true);
-      await api.post("/appointments", {
+      await api.post("/visits", {
         visitDate: values.visitDate,
         notes: values.notes,
         followUpDate: values.followUpDate,
-        status: values.status,
         patientId: patientId,
       });
       onCloseDialog(false);
@@ -150,26 +135,6 @@ export default function AddVisitModal({
               placeholder="DD/MM/YYYY"
               disabled={loading}
             />
-          </div>
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="add-visit-follow">
-              Status<span className="text-destructive">*</span>
-            </Label>
-            <Select
-              value={formik.values.status}
-              onValueChange={(value) => formik.setFieldValue("status", value)}
-              disabled={loading}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select status" />
-              </SelectTrigger>
-              <SelectContent position="popper">
-                <SelectGroup>
-                  <SelectItem value="COMPLETED">Completed</SelectItem>
-                  <SelectItem value="MISSED">Missed</SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
           </div>
           <Button type="submit">Add Visit</Button>
         </form>

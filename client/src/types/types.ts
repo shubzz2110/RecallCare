@@ -32,3 +32,14 @@ export interface Patient {
   clinicId: string;
   createdAt: string;
 }
+
+export interface Visit {
+  _id: string;
+  visitDate: string | Date;
+  followUpDate?: string | Date | null;
+  notes?: string | null;
+  clinic: string;
+  patient: string;
+  createdAt: string;
+  updatedAt: string;
+}

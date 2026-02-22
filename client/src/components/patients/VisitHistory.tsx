@@ -8,16 +8,24 @@ import {
   TableRow,
 } from "../ui/table";
 import { Badge } from "../ui/badge";
+import type { Visit } from "@/types/types";
 
-// interface VisitsResponse {
-//   success: boolean;
-//   appointments: Patient[];
-//   patientsCount: number;
-// }
+interface VisitHistoryProps {
+  history: Visit[];
+}
 
-// async function fetchVisits() {}
+export default function VisitHistory({ history }: VisitHistoryProps) {
+  const getFollowUpLabel = (date: string | Date) => {
+    const followUp = moment(date);
+    const now = moment();
+    const diffDays = followUp.diff(now, "days");
 
-export default function VisitHistory() {
+    if (diffDays === 0) return "Today";
+    if (diffDays === 1) return "Tomorrow";
+    if (diffDays < 7) return followUp.format("dddd");
+    if (diffDays < 30) return `in ${followUp.diff(now, "weeks")} weeks`;
+    return `In ${followUp.diff(now, "months")} months`;
+  };
   return (
     <Table>
       <TableHeader>
@@ -29,36 +37,43 @@ export default function VisitHistory() {
         </TableRow>
       </TableHeader>
       <TableBody>
-        <TableRow>
-          <TableCell>
-            <div className="space-y-1.5">
-              <h1 className="font-semibold">
-                {moment(new Date()).format("DD MMM YYYY")}
-              </h1>
-              <p className="uppercase font-normal text-muted-foreground text-sm">
-                {moment(new Date()).format("hh:mm a")}
-              </p>
-            </div>
-          </TableCell>
-          <TableCell className="whitespace-normal overflow-hidden" title="">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Repudiandae
-            ea hic quam nostrum modi vel ipsum quibusdam id quidem aperiam,
-            deleniti autem architecto dolores officiis dicta adipisci neque.
-          </TableCell>
-          <TableCell>
-            <div className="space-y-1.5">
-              <h1 className="font-semibold">
-                {moment(new Date()).format("DD MMM YYYY")}
-              </h1>
-              <p className="font-normal text-muted-foreground text-xs">
-                in 3 months
-              </p>
-            </div>
-          </TableCell>
-          <TableCell>
-            <Badge className="bg-secondary">Completed</Badge>
-          </TableCell>
-        </TableRow>
+        {history.map((visit) => (
+          <TableRow key={visit._id}>
+            <TableCell>
+              <div className="space-y-1.5">
+                <h1 className="font-semibold">
+                  {moment(visit.visitDate).format("DD MMM YYYY")}
+                </h1>
+                <p className="uppercase font-normal text-muted-foreground text-sm">
+                  {moment(visit.visitDate).format("hh:mm a")}
+                </p>
+              </div>
+            </TableCell>
+            <TableCell
+              className="whitespace-normal overflow-hidden"
+              title={visit.notes || ""}
+            >
+              {visit.notes || "No Notes"}
+            </TableCell>
+            <TableCell>
+              <div className="space-y-1.5">
+                <h1 className="font-semibold">
+                  {visit.followUpDate
+                    ? moment(visit.followUpDate).format("DD MMM YYYY")
+                    : "-"}
+                </h1>
+                {visit.followUpDate && (
+                  <p className="font-normal text-muted-foreground text-xs">
+                    {getFollowUpLabel(visit.followUpDate)}
+                  </p>
+                )}
+              </div>
+            </TableCell>
+            <TableCell>
+              <Badge className="bg-secondary">Completed</Badge>
+            </TableCell>
+          </TableRow>
+        ))}
       </TableBody>
     </Table>
   );

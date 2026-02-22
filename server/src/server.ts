@@ -13,6 +13,7 @@ import authRoutes from "./routes/auth";
 import internalRoutes from "./routes/internal";
 import patientRoutes from "./routes/patient";
 import clinicRoutes from "./routes/clinic";
+import visitRoutes from "./routes/visit";
 
 const PORT = 4000;
 
@@ -38,6 +39,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/internal", internalRoutes);
 app.use("/api/patients", patientRoutes);
 app.use("/api/clinics", clinicRoutes);
+app.use("/api/visits", visitRoutes);
 
 const startServer = async () => {
   try {
