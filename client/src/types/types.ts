@@ -43,3 +43,11 @@ export interface Visit {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface Appointment {
+  _id: string;
+  scheduledDate: Date | string;
+  patient: string;
+  clinic: string;
+  status: string;
+}

@@ -14,6 +14,7 @@ import internalRoutes from "./routes/internal";
 import patientRoutes from "./routes/patient";
 import clinicRoutes from "./routes/clinic";
 import visitRoutes from "./routes/visit";
+import appointmentRoutes from "./routes/appointment";
 
 const PORT = 4000;
 
@@ -40,6 +41,7 @@ app.use("/api/internal", internalRoutes);
 app.use("/api/patients", patientRoutes);
 app.use("/api/clinics", clinicRoutes);
 app.use("/api/visits", visitRoutes);
+app.use("/api/appointments", appointmentRoutes);
 
 const startServer = async () => {
   try {

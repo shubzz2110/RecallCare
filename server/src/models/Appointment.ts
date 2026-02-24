@@ -35,7 +35,7 @@ const AppointmentSchema = new mongoose.Schema<IAppointment>(
     status: {
       type: String,
       enum: Object.values(AppointmentStatus),
-      default: AppointmentStatus.SCHEDULED,
+      default: AppointmentStatus[0],
       required: true,
     } as any,
   },

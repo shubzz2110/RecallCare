@@ -115,8 +115,8 @@ export default function Clinics() {
             searchableClinics.map((clinic) => {
               const doctor = clinic.users?.[0] || null;
               return (
-                <TableRow key={clinic.id}>
-                  <TableCell>{clinic.id}</TableCell>
+                <TableRow key={clinic._id}>
+                  <TableCell>{clinic._id}</TableCell>
                   <TableCell>{clinic.name}</TableCell>
                   <TableCell>{clinic.phone}</TableCell>
                   <TableCell>

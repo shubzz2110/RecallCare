@@ -1,14 +1,14 @@
 import { TableCell, TableRow } from "../ui/table";
-import { Button } from "../ui/button";
+// import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
 import type { Patient } from "@/types/types";
-import { Calendar, EllipsisVertical, Phone, Plus } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
+// import { Calendar, EllipsisVertical, Phone, Plus } from "lucide-react";
+// import {
+//   DropdownMenu,
+//   DropdownMenuContent,
+//   DropdownMenuItem,
+//   DropdownMenuTrigger,
+// } from "../ui/dropdown-menu";
 import { useNavigate } from "react-router";
 
 interface PatientRowProps {
@@ -29,7 +29,7 @@ export default function PatientRow({ patient }: PatientRowProps) {
       <TableCell>
         <Badge variant={"outline"}>New Patient</Badge>
       </TableCell>
-      <TableCell className="text-center">
+      {/* <TableCell className="text-center">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button size={"icon-sm"} variant={"ghost"}>
@@ -51,7 +51,7 @@ export default function PatientRow({ patient }: PatientRowProps) {
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-      </TableCell>
+      </TableCell> */}
     </TableRow>
   );
 }

@@ -8,6 +8,8 @@ import {
   Activity,
   CalendarClock,
   Hash,
+  Plus,
+  Calendar,
 } from "lucide-react";
 import { useNavigate, useParams } from "react-router";
 import { usePatient } from "@/hooks/usePatient";
@@ -21,11 +23,15 @@ import moment from "moment";
 interface PatientDetailsProps {
   totalVisits: number;
   lastVisitDate: string | Date | null;
+  openAddVisitModal: () => void;
+  openScheduleAppointmentModal: () => void;
 }
 
 export default function PatientDetails({
   totalVisits,
   lastVisitDate,
+  openAddVisitModal,
+  openScheduleAppointmentModal,
 }: PatientDetailsProps) {
   const { id: patientId } = useParams();
   const navigate = useNavigate();
@@ -78,7 +84,7 @@ export default function PatientDetails({
 
   return (
     <Card>
-      <CardContent className="p-5 lg:p-6">
+      <CardContent>
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 lg:gap-8">
           {/* Left: Patient Info */}
           <div className="lg:col-span-3 space-y-5">
@@ -172,6 +178,19 @@ export default function PatientDetails({
                     Completed
                   </Badge>
                 )}
+              </div>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-2.5">
+                <Button onClick={() => openAddVisitModal()}>
+                  <Plus />
+                  Add Visit
+                </Button>
+                <Button
+                  onClick={() => openScheduleAppointmentModal()}
+                  variant={"outline"}
+                >
+                  <Calendar />
+                  Schedule Appointment
+                </Button>
               </div>
             </div>
           </div>

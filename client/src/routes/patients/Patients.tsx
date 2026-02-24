@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/table";
 import { api } from "@/lib/api";
 import { setTitle } from "@/lib/set-title";
+import { errorHandler } from "@/lib/utils";
 import type { Patient } from "@/types/types";
 import { useQuery } from "@tanstack/react-query";
 import { Plus, Search, Users } from "lucide-react";
@@ -55,7 +56,7 @@ export default function Patients() {
   const [currentPage, setCurrentPage] = useState(1);
   const [debouncedSearch] = useDebounce(search, 300);
 
-  const { data, isLoading, isFetching, refetch } = useQuery({
+  const { data, error, isLoading, isFetching, refetch } = useQuery({
     queryKey: ["patients", currentPage, debouncedSearch],
     queryFn: () => fetchPatients(currentPage, debouncedSearch, PAGE_SIZE),
     staleTime: 30000, // Consider data fresh for 30s
@@ -64,6 +65,8 @@ export default function Patients() {
 
   const patients = data?.patients || [];
   const totalCount = data?.patientsCount || 0;
+
+  if (error) errorHandler(error);
 
   // Reset to page 1 when search changes
   useEffect(() => {
@@ -122,7 +125,6 @@ export default function Patients() {
               <TableHead>Last Visit</TableHead>
               <TableHead>Next Follow-Up</TableHead>
               <TableHead>Status</TableHead>
-              <TableHead className="w-1/12">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

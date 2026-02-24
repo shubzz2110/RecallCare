@@ -29,3 +29,10 @@ export function errorHandler(error: any) {
     });
   }
 }
+
+/** Convert an ISO string to a Date object, or undefined if empty */
+export function toDateObject(dateStr?: string | null): Date | undefined {
+  if (!dateStr) return undefined;
+  const d = new Date(dateStr);
+  return isNaN(d.getTime()) ? undefined : d;
+}

@@ -21,6 +21,8 @@ import { Textarea } from "../ui/textarea";
 import { errorHandler } from "@/lib/utils";
 import { api } from "@/lib/api";
 import type { Patient } from "@/types/types";
+import ScheduleAppointmentModal from "./ScheduleAppointmentModal";
+import AddVisitModal from "./AddVisitModal";
 
 interface AddPatientDialogProps {
   showDialog: boolean;
@@ -30,7 +32,7 @@ interface AddPatientDialogProps {
 type LookupState = "idle" | "checking" | "exists" | "new";
 
 interface PatientLookUp {
-  id: string;
+  _id: string;
   name: string;
   phone: string;
 }
@@ -48,6 +50,9 @@ export default function AddPatientDialog({
   const [newPatientCreated, setNewPatientCreated] = useState<Patient | null>(
     null,
   );
+  const [showScheduleAppointmentModal, setShowScheduleAppointmentModal] =
+    useState<boolean>(false);
+  const [showAddVisitModal, setShowAddVisitModal] = useState<boolean>(false);
 
   const AddPatientSchema = Yup.object({
     phone: Yup.string()
@@ -218,15 +223,28 @@ export default function AddPatientDialog({
                     <p className="text-xs text-muted-foreground">
                       Patient Name
                     </p>
-                    <h1 className="font-medium text-sm">Andrew Fernandez</h1>
+                    <h1 className="font-medium text-sm">
+                      {existingPatient.name}
+                    </h1>
                   </div>
                 </div>
 
                 <div className="flex gap-2">
                   <Button type="button">Open Patient</Button>
 
-                  <Button type="button" variant="outline">
+                  <Button
+                    onClick={() => setShowAddVisitModal(true)}
+                    type="button"
+                    variant="ghost"
+                  >
                     Add Visit
+                  </Button>
+                  <Button
+                    onClick={() => setShowScheduleAppointmentModal(true)}
+                    type="button"
+                    variant="ghost"
+                  >
+                    Schedule Appointment
                   </Button>
                 </div>
               </div>
@@ -295,6 +313,32 @@ export default function AddPatientDialog({
           </form>
         )}
       </DialogContent>
+      <ScheduleAppointmentModal
+        showDialog={showScheduleAppointmentModal}
+        onCloseDialog={() => setShowScheduleAppointmentModal(false)}
+        patientId={
+          existingPatient
+            ? existingPatient._id!
+            : newPatientCreated
+              ? newPatientCreated._id
+              : null
+        }
+      />
+      {showAddVisitModal && (
+        <AddVisitModal
+          showDialog={showAddVisitModal}
+          onCloseDialog={(v) => {
+            setShowAddVisitModal(v);
+          }}
+          patientId={
+            existingPatient
+              ? existingPatient._id!
+              : newPatientCreated
+                ? newPatientCreated._id
+                : null
+          }
+        />
+      )}
     </Dialog>
   );
 }

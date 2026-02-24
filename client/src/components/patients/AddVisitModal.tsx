@@ -11,29 +11,24 @@ import { Label } from "../ui/label";
 import { DatePickerInput } from "@/components/ui/date-picker-input";
 import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
-import { errorHandler } from "@/lib/utils";
+import { errorHandler, toDateObject } from "@/lib/utils";
 import { api } from "@/lib/api";
-import { useParams } from "react-router";
 import { useState } from "react";
+import { CheckCircle2 } from "lucide-react";
 
 interface AddVisitDialogProps {
   showDialog: boolean;
   onCloseDialog: (show: boolean) => void;
-}
-
-/** Convert an ISO string to a Date object, or undefined if empty */
-function toDateObject(dateStr?: string | null): Date | undefined {
-  if (!dateStr) return undefined;
-  const d = new Date(dateStr);
-  return isNaN(d.getTime()) ? undefined : d;
+  patientId: string | null;
 }
 
 export default function AddVisitModal({
   showDialog,
   onCloseDialog,
+  patientId,
 }: AddVisitDialogProps) {
-  const { id: patientId } = useParams();
   const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   const AddVisitSchema = yup.object().shape({
     visitDate: yup.string(),
@@ -64,7 +59,7 @@ export default function AddVisitModal({
         followUpDate: values.followUpDate,
         patientId: patientId,
       });
-      onCloseDialog(false);
+      setSuccess(true);
     } catch (error) {
       errorHandler(error);
     } finally {
@@ -90,54 +85,65 @@ export default function AddVisitModal({
         <h1 className="text-muted-foreground font-normal text-sm">
           <span className="text-destructive">*</span>Indicates required fields
         </h1>
-        <form noValidate onSubmit={formik.handleSubmit} className="space-y-5">
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="add-visit-date">
-              Visit Date<span className="text-destructive">*</span>
-            </Label>
-            <DatePickerInput
-              id="add-visit-date"
-              value={toDateObject(String(formik.values.visitDate))}
-              onChange={(date) => {
-                if (date) {
-                  formik.setFieldValue("visitDate", date);
-                }
-              }}
-              placeholder="DD/MM/YYYY"
-              required
-              disabled={loading}
-            />
-            {formik.touched.visitDate && formik.errors.visitDate && (
-              <p className="text-error">{String(formik.errors.visitDate)}</p>
-            )}
+        {success ? (
+          <div className="flex flex-col items-center justify-center py-20">
+            <div className="flex items-center flex-col space-y-5">
+              <CheckCircle2 size={100} stroke="green" strokeWidth={1} />
+              <p className="text-foreground font-medium text-base text-center">
+                Visit has been created successfully
+              </p>
+            </div>
           </div>
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="add-visit-notes">Treatment Notes</Label>
-            <Textarea
-              placeholder="Enter treatment notes"
-              rows={4}
-              value={formik.values.notes}
-              onChange={formik.handleChange}
-              name="notes"
-              disabled={loading}
-            />
-          </div>
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="add-visit-follow">Follow Up Date</Label>
-            <DatePickerInput
-              id="add-visit-follow"
-              value={toDateObject(String(formik.values.followUpDate))}
-              onChange={(date) => {
-                if (date) {
-                  formik.setFieldValue("followUpDate", date);
-                }
-              }}
-              placeholder="DD/MM/YYYY"
-              disabled={loading}
-            />
-          </div>
-          <Button type="submit">Add Visit</Button>
-        </form>
+        ) : (
+          <form noValidate onSubmit={formik.handleSubmit} className="space-y-5">
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="add-visit-date">
+                Visit Date<span className="text-destructive">*</span>
+              </Label>
+              <DatePickerInput
+                id="add-visit-date"
+                value={toDateObject(String(formik.values.visitDate))}
+                onChange={(date) => {
+                  if (date) {
+                    formik.setFieldValue("visitDate", date);
+                  }
+                }}
+                placeholder="DD/MM/YYYY"
+                required
+                disabled={loading}
+              />
+              {formik.touched.visitDate && formik.errors.visitDate && (
+                <p className="text-error">{String(formik.errors.visitDate)}</p>
+              )}
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="add-visit-notes">Treatment Notes</Label>
+              <Textarea
+                placeholder="Enter treatment notes"
+                rows={4}
+                value={formik.values.notes}
+                onChange={formik.handleChange}
+                name="notes"
+                disabled={loading}
+              />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="add-visit-follow">Follow Up Date</Label>
+              <DatePickerInput
+                id="add-visit-follow"
+                value={toDateObject(String(formik.values.followUpDate))}
+                onChange={(date) => {
+                  if (date) {
+                    formik.setFieldValue("followUpDate", date);
+                  }
+                }}
+                placeholder="DD/MM/YYYY"
+                disabled={loading}
+              />
+            </div>
+            <Button type="submit">Add Visit</Button>
+          </form>
+        )}
       </DialogContent>
     </Dialog>
   );

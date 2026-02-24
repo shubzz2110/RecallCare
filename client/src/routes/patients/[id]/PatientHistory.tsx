@@ -10,6 +10,7 @@ import AddVisitModal from "@/components/patients/AddVisitModal";
 import type { Visit } from "@/types/types";
 import { api } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
+import ScheduleAppointmentModal from "@/components/patients/ScheduleAppointmentModal";
 
 interface PatientVisitResponse {
   success: boolean;
@@ -28,6 +29,8 @@ const fetchPatientVisits = async (
 export default function PatientHistory() {
   const navigate = useNavigate();
   const [showAddVisitModal, setShowAddVisitModal] = useState<boolean>(false);
+  const [showScheduleAppointmentModal, setShowScheduleAppointmentModal] =
+    useState<boolean>(false);
   const { id: patientId } = useParams();
 
   const { data, isLoading, refetch } = useQuery({
@@ -58,20 +61,16 @@ export default function PatientHistory() {
             icon={<User />}
           />
         </div>
-        <Button
-          onClick={() => setShowAddVisitModal(true)}
-          size="lg"
-          className="w-full sm:w-auto shrink-0"
-        >
-          <Plus className="mr-1.5" />
-          Add Visit
-        </Button>
       </div>
 
       {/* Patient Details Card */}
       <PatientDetails
         lastVisitDate={history ? (history[0]?.visitDate ?? null) : null}
         totalVisits={history?.length || 0}
+        openAddVisitModal={() => setShowAddVisitModal(true)}
+        openScheduleAppointmentModal={() =>
+          setShowScheduleAppointmentModal(true)
+        }
       />
 
       {/* Visit History */}
@@ -124,10 +123,18 @@ export default function PatientHistory() {
       {showAddVisitModal && (
         <AddVisitModal
           showDialog={showAddVisitModal}
+          patientId={patientId!}
           onCloseDialog={(v) => {
             setShowAddVisitModal(v);
             if (!v) refetch();
           }}
+        />
+      )}
+      {showScheduleAppointmentModal && (
+        <ScheduleAppointmentModal
+          showDialog={showScheduleAppointmentModal}
+          onCloseDialog={() => setShowScheduleAppointmentModal(false)}
+          patientId={patientId!}
         />
       )}
     </div>
