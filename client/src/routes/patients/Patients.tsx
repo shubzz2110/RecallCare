@@ -9,6 +9,7 @@ import {
   InputGroupAddon,
   InputGroupInput,
 } from "@/components/ui/input-group";
+import { Spinner } from "@/components/ui/spinner";
 import {
   Table,
   TableBody,
@@ -131,7 +132,10 @@ export default function Patients() {
             {isLoading ? (
               <TableRow>
                 <TableCell colSpan={6} className="text-center py-10">
-                  Loading patients...
+                  <div className="flex items-center gap-2.5">
+                    <Spinner></Spinner>
+                    Loading patients...
+                  </div>
                 </TableCell>
               </TableRow>
             ) : patients.length === 0 ? (

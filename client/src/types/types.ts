@@ -47,7 +47,13 @@ export interface Visit {
 export interface Appointment {
   _id: string;
   scheduledDate: Date | string;
-  patient: string;
+  patient: {
+    _id: string;
+    name: string;
+    phone: string;
+  };
   clinic: string;
   status: string;
+  createdAt: string;
+  updatedAt: string;
 }

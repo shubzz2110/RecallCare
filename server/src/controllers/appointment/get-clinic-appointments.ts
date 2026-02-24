@@ -8,7 +8,12 @@ export default async function getClinicAppointmentsController(
   try {
     const appointments = await Appointment.find({
       clinic: req.user?.clinicId,
-    }).sort({ scheduledDate: "descending" });
+    })
+      .sort({ scheduledDate: "descending" })
+      .populate({
+        path: "patient",
+        select: "name phone",
+      });
     return res.json({ success: true, appointments });
   } catch (error) {
     console.log("Error while fetching appointments", error);
