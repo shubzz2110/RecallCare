@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { SidebarProvider } from "@/components/ui/sidebar";
+import { Toaster } from "@/components/ui/sonner";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -31,6 +32,7 @@ export default function RootLayout({
       <body className={`${inter.variable} antialiased`}>
         <SidebarProvider>
           <TooltipProvider>{children}</TooltipProvider>
+          <Toaster position="top-center" />
         </SidebarProvider>
       </body>
     </html>

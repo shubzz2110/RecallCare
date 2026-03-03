@@ -20,7 +20,7 @@ const processQueue = (error: unknown | null) => {
   failedQueue = [];
 };
 
-const baseURL = String(process.env.NEXT_API_BASE_URL);
+const baseURL = String(process.env.NEXT_PUBLIC_API_BASE_URL);
 
 const axiosInstance: AxiosInstance = axios.create({
   baseURL,
@@ -74,18 +74,18 @@ axiosInstance.interceptors.response.use(
         if (response.data.success) {
           useAuthStore
             .getState()
-            .setAuth(response.data.userDetails, response.data.accessToken);
+            .setAuth(response.data.user, response.data.accessToken);
           originalRequest.headers.Authorization = `Bearer ${response.data.accessToken}`;
         }
         processQueue(null);
         return axiosInstance(originalRequest);
       } catch (refreshError) {
-        console.log("Refresh Token has been expired logout the user");
+        console.log("Refresh token expired, logging out user");
         processQueue(refreshError);
-        useAuthStore.getState().logout();
+        useAuthStore.getState().clearAuth();
 
         if (typeof window !== "undefined") {
-          window.location.href = `/login?reason=expired`;
+          window.location.href = "/login?reason=expired";
         }
 
         return Promise.reject(refreshError);

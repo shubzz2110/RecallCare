@@ -4,24 +4,22 @@ import { NavLink } from "@/components/NavLink";
 import {
   Sidebar,
   SidebarContent,
-  SidebarGroup,
   SidebarMenu,
-  SidebarMenuButton,
+  SidebarGroup,
   SidebarMenuItem,
+  SidebarMenuButton,
   useSidebar,
 } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
-import { LayoutDashboard, Stethoscope, User, Users } from "lucide-react";
+import { LayoutDashboard, User } from "lucide-react";
 
 const internalSidebarItems = [
-  { name: "Dashboard", href: "/internal/dashboard", icon: LayoutDashboard },
-  { name: "Clinics", href: "/internal/clinics", icon: Stethoscope },
-  { name: "Users", href: "/internal/users", icon: Users },
-  { name: "Profile", href: "/internal/profile", icon: User },
+  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { name: "Profile", href: "/profile", icon: User },
 ];
-export default function InternalSidebar() {
-  const { open } = useSidebar();
 
+export default function AppSidebar() {
+  const { open } = useSidebar();
   return (
     <Sidebar collapsible="icon" className="border-r border-border/40">
       <SidebarContent>

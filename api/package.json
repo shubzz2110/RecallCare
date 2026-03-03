@@ -5,7 +5,8 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/server.js",
-    "dev": "nodemon --watch \"src/**/*.ts\" --exec \"npx ts-node --files\" src/server.ts"
+    "dev": "nodemon --watch \"src/**/*.ts\" --exec \"npx ts-node --files\" src/server.ts",
+    "seed:admin": "ts-node src/scripts/create-admin.ts"
   },
   "keywords": [],
   "author": "",

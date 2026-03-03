@@ -68,17 +68,6 @@ export default function LoginForm() {
       setLoading(false);
     }
   };
-
-  // const user = useAuthStore.getState().user;
-  // const [checking, setChecking] = useState(false);
-
-  // useEffect(() => {
-  //   const timer = setTimeout(() => setChecking(false), 300);
-  //   return () => clearTimeout(timer);
-  // }, []);
-
-  // if (checking) return null;
-  // if (user) return <Navigate to="/dashboard" replace />;
   return (
     <form noValidate onSubmit={formik.handleSubmit} className="space-y-5">
       <div className="flex flex-col gap-1.5 w-full">

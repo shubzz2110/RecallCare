@@ -23,3 +23,10 @@ export interface InternalClinics {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface ClinicCreatePayload {
+  clinicName: string;
+  doctorName: string;
+  doctorEmail: string;
+  phone: string;
+}

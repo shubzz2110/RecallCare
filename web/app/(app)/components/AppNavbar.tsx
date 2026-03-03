@@ -9,9 +9,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuthStore } from "@/store/auth";
-import { LogOut } from "lucide-react";
+import { LogOut, User } from "lucide-react";
 
-export default function InternalNavbar() {
+export default function AppNavbar() {
   const { user, logout } = useAuthStore();
   const today = new Date().toLocaleDateString("en-IN", {
     weekday: "long",
@@ -37,6 +37,10 @@ export default function InternalNavbar() {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-40">
+          <DropdownMenuItem>
+            <User className="h-4 w-4 mr-2" />
+            Profile
+          </DropdownMenuItem>
           <DropdownMenuItem onClick={logout} variant="destructive">
             <LogOut className="h-4 w-4 mr-2" />
             Logout
