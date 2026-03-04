@@ -30,3 +30,25 @@ export interface ClinicCreatePayload {
   doctorEmail: string;
   phone: string;
 }
+
+export interface PaginationParams {
+  page?: number;
+  limit?: number;
+  search?: string;
+  sortBy?: string;
+  sortOrder?: "asc" | "desc";
+}
+
+export interface Patient {
+  _id: string;
+  name: string;
+  phone: string;
+  clinic: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface PatientCreatePayload {
+  name: string;
+  phone: string;
+}

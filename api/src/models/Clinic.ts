@@ -9,7 +9,7 @@ export interface IClinic extends Document {
   updatedAt: Date;
 }
 
-const ClinicSchema = new mongoose.Schema<IClinic>(
+const clinicSchema = new mongoose.Schema<IClinic>(
   {
     name: {
       type: String,
@@ -26,10 +26,10 @@ const ClinicSchema = new mongoose.Schema<IClinic>(
   },
 );
 
-ClinicSchema.virtual("users", {
+clinicSchema.virtual("users", {
   ref: "User",
   localField: "_id",
   foreignField: "clinic",
 });
 
-export const Clinic = mongoose.model<IClinic>("Clinic", ClinicSchema);
+export const Clinic = mongoose.model<IClinic>("Clinic", clinicSchema);

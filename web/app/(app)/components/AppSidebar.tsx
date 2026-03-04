@@ -11,10 +11,11 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
-import { LayoutDashboard, User } from "lucide-react";
+import { LayoutDashboard, User, Users } from "lucide-react";
 
 const internalSidebarItems = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { name: "Patients", href: "/patients", icon: Users },
   { name: "Profile", href: "/profile", icon: User },
 ];
 

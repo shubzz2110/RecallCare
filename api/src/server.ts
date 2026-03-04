@@ -11,6 +11,7 @@ import connectToDatabase from "./config/db";
 
 import authRoutes from "./routes/auth";
 import internalRoutes from "./routes/internal";
+import patientsRoutes from "./routes/patients";
 
 const PORT = 4000;
 
@@ -38,6 +39,7 @@ app.use(cookieParser());
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/internal", internalRoutes);
+app.use("/api/patients", patientsRoutes);
 
 const startServer = async () => {
   try {

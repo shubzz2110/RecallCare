@@ -1,16 +1,12 @@
 import { api } from "@/lib/api";
 import { errorHandler } from "@/lib/utils";
 import { useAuthStore } from "@/store/auth";
-import { ClinicCreatePayload, InternalClinics } from "@/types/types";
+import {
+  ClinicCreatePayload,
+  InternalClinics,
+  PaginationParams,
+} from "@/types/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-
-export interface PaginationParams {
-  page?: number;
-  limit?: number;
-  search?: string;
-  sortBy?: string;
-  sortOrder?: "asc" | "desc";
-}
 
 export interface PaginationMeta {
   page: number;
