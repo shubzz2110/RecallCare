@@ -38,7 +38,7 @@ const createClinicController = async (req: Request, res: Response) => {
       throw userError;
     }
 
-    const setupLink = `${FRONTEND_URL}/setup-password?token=${setupToken}`;
+    const setupLink = `${FRONTEND_URL}/setup-account?token=${setupToken}`;
     console.log(`[EMAIL TO CLINIC]: setup link ${setupLink}`);
 
     return res.json({ success: true, message: "Clinic created successfully" });

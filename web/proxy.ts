@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const PUBLIC_ROUTES = ["/login"];
+const PUBLIC_ROUTES = ["/login", "/forgot-password"];
+
+const PUBLIC_ALWAYS_ROUTES = ["/setup-account"];
 
 const PROTECTED_PREFIXES = ["/dashboard", "/profile", "/internal"];
 
@@ -9,9 +11,15 @@ export function proxy(request: NextRequest) {
   const hasRefreshToken = request.cookies.has("refreshToken");
 
   const isPublicRoute = PUBLIC_ROUTES.includes(pathname);
+  const isAlwaysPublic = PUBLIC_ALWAYS_ROUTES.includes(pathname);
   const isProtectedRoute = PROTECTED_PREFIXES.some((prefix) =>
     pathname.startsWith(prefix),
   );
+
+  // Always-public routes are accessible regardless of auth state
+  if (isAlwaysPublic) {
+    return NextResponse.next();
+  }
 
   // Authenticated user trying to access login → redirect to dashboard
   if (hasRefreshToken && isPublicRoute) {
