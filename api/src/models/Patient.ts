@@ -4,6 +4,7 @@ export interface IPatient extends Document {
   name: string;
   phone: string;
   clinic: Types.ObjectId;
+  visible: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -17,6 +18,7 @@ const patientSchema = new mongoose.Schema<IPatient>(
       ref: "Clinic",
       required: true,
     },
+    visible: { type: Boolean, default: true },
   },
   { timestamps: true },
 );

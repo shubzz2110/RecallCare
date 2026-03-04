@@ -42,7 +42,10 @@ export default function PatientRow({ patient, handleAction }: PatientRowProps) {
               <Phone className="h-4 w-4" />
               Call
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleAction("delete", patient)}>
+            <DropdownMenuItem
+              variant="destructive"
+              onClick={() => handleAction("delete", patient)}
+            >
               <Trash2 className="h-4 w-4" />
               Delete Patient
             </DropdownMenuItem>
