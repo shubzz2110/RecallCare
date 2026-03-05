@@ -18,7 +18,6 @@ const patientSchema = new mongoose.Schema<IPatient>(
       ref: "Clinic",
       required: true,
     },
-    visible: { type: Boolean, default: true },
   },
   { timestamps: true },
 );

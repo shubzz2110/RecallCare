@@ -78,3 +78,20 @@ export function useUpdatePatient(patientId: string) {
     },
   });
 }
+
+export function useDeletePatient(patientId: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async () => {
+      const { data } = await api.delete(`/patients/${patientId}`);
+      return data;
+    },
+    onSuccess: (data) => {
+      // Invalidate all patient list queries so any mounted table/list refetches
+      queryClient.invalidateQueries({ queryKey: ["patients"] });
+    },
+    onError: (error: any) => {
+      errorHandler(error);
+    },
+  });
+}

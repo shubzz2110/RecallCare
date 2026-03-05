@@ -26,6 +26,7 @@ import { useEffect, useState } from "react";
 import CreatePatientModal from "./components/CreatePatientModal";
 import PatientRow from "./components/PatientRow";
 import UpdatePatientModal from "./components/UpdatePatientModal";
+import DeletePatientModal from "./components/DeletePatientModal";
 
 const LIMIT = 20;
 
@@ -48,6 +49,8 @@ export default function AppPatients() {
     useState<boolean>(false);
   const [isUpdatePatientModalOpen, setIsUpdatePatientModalOpen] =
     useState<boolean>(false);
+  const [isDeletePatientModalOpen, setIsDeletePatientModalOpen] =
+    useState<boolean>(false);
 
   // This will hold the patient data for which an action is being performed (edit/schedule/call/delete)
   const [actionPatient, setActionPatient] = useState<Patient | null>(null);
@@ -68,7 +71,8 @@ export default function AppPatients() {
         window.open(`tel:${patient.phone}`, "_blank");
         break;
       case "delete":
-        // Handle delete action
+        setActionPatient(patient);
+        setIsDeletePatientModalOpen(true);
         break;
     }
   };
@@ -208,6 +212,17 @@ export default function AppPatients() {
             setIsUpdatePatientModalOpen(false);
           }}
           patient={actionPatient!}
+        />
+      )}
+      {/* Delete Patient Modal */}
+      {isDeletePatientModalOpen && (
+        <DeletePatientModal
+          isOpen={isDeletePatientModalOpen}
+          onClose={() => {
+            setActionPatient(null);
+            setIsDeletePatientModalOpen(false);
+          }}
+          patientId={actionPatient!._id}
         />
       )}
     </div>

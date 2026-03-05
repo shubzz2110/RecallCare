@@ -11,6 +11,7 @@ import {
 import { authenticate, requireRole } from "../middleware/auth";
 import { getClinicPatientsController } from "../controllers/patient/get-clinic-patients";
 import { updatePatientController } from "../controllers/patient/update-patient";
+import { deletePatientController } from "../controllers/patient/delete-patient";
 
 patientsRouter.post(
   "/",
@@ -36,6 +37,12 @@ patientsRouter.put(
     requireRole("CLINIC"),
   ],
   updatePatientController,
+);
+
+patientsRouter.delete(
+  "/:id",
+  [authenticate, requireRole("CLINIC")],
+  deletePatientController,
 );
 
 export default patientsRouter;
